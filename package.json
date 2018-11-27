@@ -3,6 +3,9 @@
   "description": "An initializer for purescript-react-basic project.",
   "version": "0.0.0",
   "author": "bouzuya <m@bouzuya.net> (https://bouzuya.net/)",
+  "bin": {
+    "create-purescript-react-basic": "./bin/create-purescript-react-basic"
+  },
   "bugs": {
     "url": "https://github.com/bouzuya/create-purescript-react-basic/issues"
   },

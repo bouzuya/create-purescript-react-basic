@@ -1,5 +1,11 @@
 # create-purescript-react-basic
 
+An initializer for purescript-react-basic project.
+
+## How to use
+
+`npm init @bouzuya/purescript-react-basic`
+
 ## License
 
 [MIT](LICENSE)

@@ -19,7 +19,8 @@
   },
   "files": [
     "bin",
-    "output"
+    "output",
+    "templates"
   ],
   "homepage": "https://github.com/bouzuya/create-purescript-react-basic#readme",
   "keywords": [],

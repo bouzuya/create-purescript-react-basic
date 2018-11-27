@@ -2,12 +2,20 @@
   "name": "@bouzuya/create-purescript-react-basic",
   "description": "An initializer for purescript-react-basic project.",
   "version": "0.0.0",
-  "author": "bouzuya <m@bouzuya.net> (https://bouzuya.net/)",
+  "author": {
+    "name": "bouzuya",
+    "email": "m@bouzuya.net",
+    "url": "https://bouzuya.net/"
+  },
   "bin": {
     "create-purescript-react-basic": "./bin/create-purescript-react-basic"
   },
   "bugs": {
     "url": "https://github.com/bouzuya/create-purescript-react-basic/issues"
+  },
+  "devDependencies": {
+    "psc-package-bin-simple": "^2.0.1",
+    "purescript": "^0.12.1"
   },
   "homepage": "https://github.com/bouzuya/create-purescript-react-basic#readme",
   "keywords": [],

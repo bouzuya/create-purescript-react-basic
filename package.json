@@ -26,6 +26,12 @@
     "url": "git+https://github.com/bouzuya/create-purescript-react-basic.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "psc-package sources | xargs purs compile 'src/**/*.purs' 'test/**/*.purs'",
+    "postinstall": "psc-package install",
+    "psc-package": "psc-package",
+    "purs": "purs",
+    "repl": "psc-package repl -- 'test/**/*.purs'",
+    "start": "node --eval \"require('./output/Main').main();\"",
+    "test": "node --eval \"require('./output/Test.Main').main();\""
   }
 }

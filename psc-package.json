@@ -1,0 +1,8 @@
+{
+  "name": "create-purescript-react-basic",
+  "set": "psc-0.12.1",
+  "source": "https://github.com/purescript/package-sets.git",
+  "depends": [
+    "prelude"
+  ]
+}

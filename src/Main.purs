@@ -74,12 +74,8 @@ initPscPackageJson { name } = do
       , "set": "psc-0.12.1"
       , "source": "https://github.com/purescript/package-sets.git"
       , "depends":
-        [ "node-fs-aff"
-        , "node-path"
-        , "node-process"
-        , "prelude"
+        [ "prelude"
         , "psci-support"
-        , "simple-json"
         , "test-unit"
         ]
       }

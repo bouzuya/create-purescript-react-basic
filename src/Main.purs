@@ -1,18 +1,20 @@
 module Main (main) where
 
 import Data.Either (either)
+import Data.Maybe (Maybe, maybe)
 import Effect (Effect)
 import Effect.Aff (Aff, runAff_)
 import Effect.Class (liftEffect)
 import Effect.Class.Console (log)
-import Effect.Exception (throwException)
+import Effect.Exception (throw, throwException)
+import Foreign (Foreign)
 import Node.ChildProcess as ChildProcess
 import Node.Encoding as Encoding
 import Node.FS.Aff as Fs
 import Node.Globals (__dirname)
 import Node.Path as Path
-import Prelude (Unit, bind, discard, pure, unit, void, (<>))
-import Simple.JSON (writeJSON)
+import Prelude (Unit, bind, discard, pure, unit, void)
+import Simple.JSON as SimpleJSON
 
 exec :: String -> Array String -> Aff Unit
 exec file args =
@@ -29,48 +31,56 @@ addLicenseAndUpdateReadme = do
   _ <- Fs.appendTextFile Encoding.UTF8 "README.md" readme
   pure unit
 
+type PackageJson =
+  { name :: String
+  , description :: String
+  , verison :: String
+  , author :: String
+  , bugs :: { url :: String }
+  , devDependencies :: Foreign
+  , homepage :: String
+  , keywords :: Array String
+  , license :: String
+  , main :: String
+  , repository :: { type :: String, url :: String }
+  , scripts :: Foreign
+  }
+
 initPackageJson :: { name :: String, description :: String } -> Aff Unit
 initPackageJson { name, description } = do
+  exec "npm" ["init", "--yes"]
+  exec "npm" ["install", "--save-dev", "npm-run-all", "psc-package-bin-simple", "purescript"]
+  packageJsonText <- Fs.readTextFile Encoding.UTF8 "package.json"
+  packageJsonRecord <-
+    liftEffect
+      (maybe
+        (throw "invalid package.json")
+        pure
+        (SimpleJSON.readJSON_ packageJsonText :: Maybe PackageJson))
   let
-    pkg =
-      { name
-      , description
-      , verison: "0.0.0"
-      , author:
-        { email: "m@bouzuya.net"
-        , name: "bouzuya"
-        , url: "https://bouzuya.net/"
-        }
-      , bugs:
-        { url: "https://github.com/bouzuya/" <> name <> "/issues"
-        }
-      , devDependencies:
-        {
-          "npm-run-all": "^4.1.5",
-          "psc-package-bin-simple": "^2.0.1",
-          "purescript": "^0.12.1"
-        }
-      , homepage: "https://github.com/bouzuya/" <> name <> "#readme"
-      , keywords: [] :: Array String
-      , license: "MIT"
-      , main: "index.js"
-      , repository:
-        { type: "git"
-        , url: "git+https://github.com/bouzuya/" <> name <> ".git"
-        }
-      , scripts:
-        { build: "psc-package sources | xargs purs compile 'src/**/*.purs' 'test/**/*.purs'"
-        , bundle: "purs bundle 'output/**/*.js' --main Main --module Main --output index.js"
-        , "install:psc-package": "psc-package install"
-        , prepare: "npm-run-all -s 'install:psc-package' build bundle"
-        , "psc-package": "psc-package"
-        , purs: "purs"
-        , repl: "psc-package repl -- 'test/**/*.purs'"
-        , start: "node --eval \"require('./output/Main').main();\""
-        , test: "node --eval \"require('./output/Test.Main').main();\""
-        }
-      }
-    jsonText = writeJSON pkg
+    jsonText =
+      SimpleJSON.writeJSON
+        (packageJsonRecord
+          {
+            -- TODO: fix author format
+            -- author =
+            --   { email: "m@bouzuya.net"
+            --   , name: "bouzuya"
+            --   , url: "https://bouzuya.net/"
+            --   }
+            scripts =
+              SimpleJSON.write
+              { build: "psc-package sources | xargs purs compile 'src/**/*.purs' 'test/**/*.purs'"
+              , bundle: "purs bundle 'output/**/*.js' --main Main --module Main --output index.js"
+              , "install:psc-package": "psc-package install"
+              , prepare: "npm-run-all -s 'install:psc-package' build bundle"
+              , "psc-package": "psc-package"
+              , purs: "purs"
+              , repl: "psc-package repl -- 'test/**/*.purs'"
+              , start: "node --eval \"require('./output/Main').main();\""
+              , test: "node --eval \"require('./output/Test.Main').main();\""
+              }
+          })
   Fs.writeTextFile Encoding.UTF8 "package.json" jsonText
 
 initPscPackageJson :: Aff Unit

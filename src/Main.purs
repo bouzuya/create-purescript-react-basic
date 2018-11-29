@@ -58,9 +58,20 @@ initPackageJson { name, description }= do
     jsonText = writeJSON pkg
   Fs.writeTextFile Encoding.UTF8 "package.json" jsonText
 
+addDummyCodes :: Aff Unit
+addDummyCodes = do
+  dir <- pure (Path.concat [__dirname, "templates"])
+  Fs.mkdir "src"
+  src <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, "src", "Main.purs"])
+  _ <- Fs.writeTextFile Encoding.UTF8 (Path.concat ["src", "Main.purs"]) src
+  Fs.mkdir "test"
+  test <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, "test", "Main.purs"])
+  _ <- Fs.appendTextFile Encoding.UTF8 (Path.concat ["test", "Main.purs"]) test
+  pure unit
 
 main :: Effect Unit
 main = do
   runAff_ (either (throwException) pure) do
     addLicenseAndUpdateReadme
     initPackageJson { name: "NAME", description: "DESCRIPTION" }
+    addDummyCodes

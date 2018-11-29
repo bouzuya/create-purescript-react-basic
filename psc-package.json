@@ -8,6 +8,7 @@
     "node-process",
     "prelude",
     "psci-support",
+    "simple-json",
     "test-unit"
   ]
 }

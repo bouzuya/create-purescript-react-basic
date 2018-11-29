@@ -8,7 +8,8 @@ import Node.Encoding as Encoding
 import Node.FS.Aff as Fs
 import Node.Globals (__dirname)
 import Node.Path as Path
-import Prelude (Unit, bind, pure, unit)
+import Prelude (Unit, bind, discard, pure, unit, (<>))
+import Simple.JSON (writeJSON)
 
 addLicenseAndUpdateReadme :: Aff Unit
 addLicenseAndUpdateReadme = do
@@ -19,7 +20,47 @@ addLicenseAndUpdateReadme = do
   _ <- Fs.appendTextFile Encoding.UTF8 "README.md" readme
   pure unit
 
+initPackageJson :: { name :: String, description :: String } -> Aff Unit
+initPackageJson { name, description }= do
+  let
+    pkg =
+      { name
+      , description
+      , verison: "0.0.0"
+      , author:
+        { email: "m@bouzuya.net"
+        , name: "bouzuya"
+        , url: "https://bouzuya.net/"
+        }
+      , bugs:
+        { url: "https://github.com/bouzuya/" <> name <> "/issues"
+        }
+      , homepage: "https://github.com/bouzuya/" <> name <> "#readme"
+      , keywords: [] :: Array String
+      , license: "MIT"
+      , main: "index.js"
+      , repository:
+        { type: "git"
+        , url: "git+https://github.com/bouzuya/" <> name <> ".git"
+        }
+      , scripts:
+        { build: "psc-package sources | xargs purs compile 'src/**/*.purs' 'test/**/*.purs'"
+        , bundle: "purs bundle 'output/**/*.js' --main Main --module Main --output index.js"
+        , "install:psc-package": "psc-package install"
+        , prepare: "npm-run-all -s 'install:psc-package' build bundle"
+        , "psc-package": "psc-package"
+        , purs: "purs"
+        , repl: "psc-package repl -- 'test/**/*.purs'"
+        , start: "node --eval \"require('./output/Main').main();\""
+        , test: "node --eval \"require('./output/Test.Main').main();\""
+        }
+      }
+    jsonText = writeJSON pkg
+  Fs.writeTextFile Encoding.UTF8 "package.json" jsonText
+
+
 main :: Effect Unit
 main = do
   runAff_ (either (throwException) pure) do
     addLicenseAndUpdateReadme
+    initPackageJson { name: "NAME", description: "DESCRIPTION" }

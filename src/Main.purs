@@ -34,7 +34,7 @@ addLicenseAndUpdateReadme = do
 type PackageJson =
   { name :: String
   , description :: String
-  , verison :: String
+  , version :: String
   , author :: String
   , bugs :: { url :: String }
   , devDependencies :: Foreign

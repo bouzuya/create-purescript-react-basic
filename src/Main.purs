@@ -3,7 +3,9 @@ module Main (main) where
 import Data.Either (either)
 import Effect (Effect)
 import Effect.Aff (Aff, runAff_)
+import Effect.Class (liftEffect)
 import Effect.Exception (throwException)
+import Node.ChildProcess as ChildProcess
 import Node.Encoding as Encoding
 import Node.FS.Aff as Fs
 import Node.Globals (__dirname)
@@ -95,6 +97,22 @@ addDummyCodes = do
   _ <- Fs.appendTextFile Encoding.UTF8 (Path.concat ["test", "Main.purs"]) test
   pure unit
 
+addReactBasic :: Aff Unit
+addReactBasic = do
+  _ <-
+    liftEffect
+      ( ChildProcess.execFileSync
+          "npm"
+          ["install", "react", "react-dom"]
+          ChildProcess.defaultExecSyncOptions)
+  _ <-
+    liftEffect
+      ( ChildProcess.execFileSync
+          "npm"
+          ["run", "psc-package", "--", "install", "react-basic"]
+          ChildProcess.defaultExecSyncOptions)
+  pure unit
+
 main :: Effect Unit
 main = do
   runAff_ (either (throwException) pure) do
@@ -102,3 +120,4 @@ main = do
     initPackageJson { name: "NAME", description: "DESCRIPTION" }
     addDummyCodes
     initPscPackageJson { name: "NAME" }
+    addReactBasic

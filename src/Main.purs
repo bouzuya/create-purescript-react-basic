@@ -21,7 +21,7 @@ addLicenseAndUpdateReadme = do
   pure unit
 
 initPackageJson :: { name :: String, description :: String } -> Aff Unit
-initPackageJson { name, description }= do
+initPackageJson { name, description } = do
   let
     pkg =
       { name
@@ -64,6 +64,26 @@ initPackageJson { name, description }= do
     jsonText = writeJSON pkg
   Fs.writeTextFile Encoding.UTF8 "package.json" jsonText
 
+initPscPackageJson :: { name :: String } -> Aff Unit
+initPscPackageJson { name } = do
+  let
+    pkg =
+      { name
+      , "set": "psc-0.12.1"
+      , "source": "https://github.com/purescript/package-sets.git"
+      , "depends":
+        [ "node-fs-aff"
+        , "node-path"
+        , "node-process"
+        , "prelude"
+        , "psci-support"
+        , "simple-json"
+        , "test-unit"
+        ]
+      }
+    jsonText = writeJSON pkg
+  Fs.writeTextFile Encoding.UTF8 "psc-package.json" jsonText
+
 addDummyCodes :: Aff Unit
 addDummyCodes = do
   dir <- pure (Path.concat [__dirname, "templates"])
@@ -81,3 +101,4 @@ main = do
     addLicenseAndUpdateReadme
     initPackageJson { name: "NAME", description: "DESCRIPTION" }
     addDummyCodes
+    initPscPackageJson { name: "NAME" }

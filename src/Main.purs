@@ -4,14 +4,21 @@ import Data.Either (either)
 import Effect (Effect)
 import Effect.Aff (Aff, runAff_)
 import Effect.Class (liftEffect)
+import Effect.Class.Console (log)
 import Effect.Exception (throwException)
 import Node.ChildProcess as ChildProcess
 import Node.Encoding as Encoding
 import Node.FS.Aff as Fs
 import Node.Globals (__dirname)
 import Node.Path as Path
-import Prelude (Unit, bind, discard, pure, unit, (<>))
+import Prelude (Unit, bind, discard, pure, unit, void, (<>))
 import Simple.JSON (writeJSON)
+
+exec :: String -> Array String -> Aff Unit
+exec file args =
+  void
+    (liftEffect
+      (ChildProcess.execFileSync file args ChildProcess.defaultExecSyncOptions))
 
 addLicenseAndUpdateReadme :: Aff Unit
 addLicenseAndUpdateReadme = do
@@ -66,21 +73,12 @@ initPackageJson { name, description } = do
     jsonText = writeJSON pkg
   Fs.writeTextFile Encoding.UTF8 "package.json" jsonText
 
-initPscPackageJson :: { name :: String } -> Aff Unit
-initPscPackageJson { name } = do
-  let
-    pkg =
-      { name
-      , "set": "psc-0.12.1"
-      , "source": "https://github.com/purescript/package-sets.git"
-      , "depends":
-        [ "prelude"
-        , "psci-support"
-        , "test-unit"
-        ]
-      }
-    jsonText = writeJSON pkg
-  Fs.writeTextFile Encoding.UTF8 "psc-package.json" jsonText
+initPscPackageJson :: Aff Unit
+initPscPackageJson = do
+  log "initialize psc-package.json..."
+  exec "npm" ["run", "psc-package", "--", "init"]
+  exec "npm" ["run", "psc-package", "--", "install", "psci-support"]
+  exec "npm" ["run", "psc-package", "--", "install", "test-unit"]
 
 addDummyCodes :: Aff Unit
 addDummyCodes = do
@@ -115,5 +113,5 @@ main = do
     addLicenseAndUpdateReadme
     initPackageJson { name: "NAME", description: "DESCRIPTION" }
     addDummyCodes
-    initPscPackageJson { name: "NAME" }
+    initPscPackageJson
     addReactBasic

@@ -4,7 +4,16 @@ An initializer for purescript-react-basic project.
 
 ## How to use
 
-`npm init @bouzuya/purescript-react-basic`
+```
+$ # mkdir project1
+$ # cd project1/
+$ # echo '# foo' > README.md
+$ # git init
+$ # git commit -m 'initial commit'
+$ # hub create
+$ # git push origin master
+$ npm init @bouzuya/purescript-react-basic
+```
 
 ## License
 

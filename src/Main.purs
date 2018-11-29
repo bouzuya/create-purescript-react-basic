@@ -24,6 +24,7 @@ exec file args =
 
 addLicenseAndUpdateReadme :: Aff Unit
 addLicenseAndUpdateReadme = do
+  log "add license and update readme..."
   dir <- pure (Path.concat [__dirname, "templates"])
   license <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, "LICENSE"])
   _ <- Fs.writeTextFile Encoding.UTF8 "LICENSE" license
@@ -48,6 +49,7 @@ type PackageJson =
 
 initPackageJson :: { name :: String, description :: String } -> Aff Unit
 initPackageJson { name, description } = do
+  log "initialize package.json..."
   exec "npm" ["init", "--yes"]
   exec "npm" ["install", "--save-dev", "npm-run-all", "psc-package-bin-simple", "purescript"]
   packageJsonText <- Fs.readTextFile Encoding.UTF8 "package.json"

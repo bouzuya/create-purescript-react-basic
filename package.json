@@ -14,12 +14,13 @@
     "url": "https://github.com/bouzuya/create-purescript-react-basic/issues"
   },
   "devDependencies": {
+    "npm-run-all": "^4.1.5",
     "psc-package-bin-simple": "^2.0.1",
     "purescript": "^0.12.1"
   },
   "files": [
     "bin",
-    "output",
+    "index.js",
     "templates"
   ],
   "homepage": "https://github.com/bouzuya/create-purescript-react-basic#readme",
@@ -32,7 +33,9 @@
   },
   "scripts": {
     "build": "psc-package sources | xargs purs compile 'src/**/*.purs' 'test/**/*.purs'",
-    "prepare": "psc-package install",
+    "bundle": "purs bundle 'output/**/*.js' --main Main --module Main --output index.js",
+    "install:psc-package": "psc-package install",
+    "prepare": "npm-run-all -s 'install:psc-package' build bundle",
     "psc-package": "psc-package",
     "purs": "purs",
     "repl": "psc-package repl -- 'test/**/*.purs'",

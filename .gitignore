@@ -1,5 +1,5 @@
 /.env*
 /.psc*
+/index.js
 /node_modules/
 /output/
-/public/index.js

@@ -35,6 +35,12 @@ initPackageJson { name, description }= do
       , bugs:
         { url: "https://github.com/bouzuya/" <> name <> "/issues"
         }
+      , devDependencies:
+        {
+          "npm-run-all": "^4.1.5",
+          "psc-package-bin-simple": "^2.0.1",
+          "purescript": "^0.12.1"
+        }
       , homepage: "https://github.com/bouzuya/" <> name <> "#readme"
       , keywords: [] :: Array String
       , license: "MIT"

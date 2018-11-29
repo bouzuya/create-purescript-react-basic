@@ -93,19 +93,9 @@ addDummyCodes = do
 
 addReactBasic :: Aff Unit
 addReactBasic = do
-  _ <-
-    liftEffect
-      ( ChildProcess.execFileSync
-          "npm"
-          ["install", "react", "react-dom"]
-          ChildProcess.defaultExecSyncOptions)
-  _ <-
-    liftEffect
-      ( ChildProcess.execFileSync
-          "npm"
-          ["run", "psc-package", "--", "install", "react-basic"]
-          ChildProcess.defaultExecSyncOptions)
-  pure unit
+  log "add react-basic deps..."
+  exec "npm" ["install", "react", "react-dom"]
+  exec "npm" ["run", "psc-package", "--", "install", "react-basic"]
 
 main :: Effect Unit
 main = do

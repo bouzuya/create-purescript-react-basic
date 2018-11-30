@@ -1,0 +1,6 @@
+/.env*
+/.psc*
+/*.tgz
+/index.js
+/node_modules/
+/output/

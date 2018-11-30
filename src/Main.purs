@@ -121,6 +121,13 @@ addReactBasic = do
   exec "npm" ["install", "react", "react-dom"]
   exec "npm" ["run", "psc-package", "--", "install", "react-basic"]
 
+addGitIgnore :: Aff Unit
+addGitIgnore = do
+  log "add .gitignore..."
+  dir <- pure (Path.concat [__dirname, "templates"])
+  ignore <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, ".gitignore"])
+  Fs.writeTextFile Encoding.UTF8 ".gitignore" ignore
+
 main :: Effect Unit
 main = do
   runAff_ (either (throwException) pure) do
@@ -129,3 +136,4 @@ main = do
     addDummyCodes
     initPscPackageJson
     addReactBasic
+    addGitIgnore

@@ -17,7 +17,7 @@ import Node.Encoding as Encoding
 import Node.FS.Aff as Fs
 import Node.Globals (__dirname)
 import Node.Path as Path
-import Prelude (Unit, bind, discard, join, map, pure, unit, void)
+import Prelude (Unit, bind, discard, join, map, pure, void)
 import Simple.JSON as SimpleJSON
 
 type PackageJson =
@@ -35,6 +35,11 @@ type PackageJson =
   , scripts :: Foreign
   }
 
+copyTextFile :: String -> String -> Aff Unit
+copyTextFile src dst = do
+  d <- Fs.readTextFile Encoding.UTF8 src
+  Fs.writeTextFile Encoding.UTF8 dst d
+
 exec :: String -> Array String -> Aff Unit
 exec file args =
   void
@@ -45,11 +50,8 @@ addLicenseAndUpdateReadme :: Aff Unit
 addLicenseAndUpdateReadme = do
   log "add license and update readme..."
   dir <- pure (Path.concat [__dirname, "templates"])
-  license <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, "LICENSE"])
-  _ <- Fs.writeTextFile Encoding.UTF8 "LICENSE" license
-  readme <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, "README.md"])
-  _ <- Fs.appendTextFile Encoding.UTF8 "README.md" readme
-  pure unit
+  copyTextFile (Path.concat [dir, "LICENSE"]) "LICENSE"
+  copyTextFile (Path.concat [dir, "README.md"]) "README.md"
 
 toAuthorRecord :: String -> Maybe { email :: String, name :: String, url :: String }
 toAuthorRecord s = do
@@ -109,12 +111,13 @@ addDummyCodes = do
   log "add dummy codes..."
   dir <- pure (Path.concat [__dirname, "templates"])
   Fs.mkdir "src"
-  src <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, "src", "Main.purs"])
-  _ <- Fs.writeTextFile Encoding.UTF8 (Path.concat ["src", "Main.purs"]) src
+  copyTextFile
+    (Path.concat [dir, "src", "Main.purs"])
+    (Path.concat ["src", "Main.purs"])
   Fs.mkdir "test"
-  test <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, "test", "Main.purs"])
-  _ <- Fs.appendTextFile Encoding.UTF8 (Path.concat ["test", "Main.purs"]) test
-  pure unit
+  copyTextFile
+    (Path.concat [dir, "test", "Main.purs"])
+    (Path.concat ["test", "Main.purs"])
 
 addReactBasic :: Aff Unit
 addReactBasic = do
@@ -126,8 +129,7 @@ addGitIgnore :: Aff Unit
 addGitIgnore = do
   log "add .gitignore..."
   dir <- pure (Path.concat [__dirname, "templates"])
-  ignore <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, ".gitignore"])
-  Fs.writeTextFile Encoding.UTF8 ".gitignore" ignore
+  copyTextFile (Path.concat [dir, ".gitignore"]) ".gitignore"
 
 main :: Effect Unit
 main = do

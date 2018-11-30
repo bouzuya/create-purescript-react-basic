@@ -1,7 +1,11 @@
 module Main (main) where
 
-import Data.Either (either)
+import Data.Array as Array
+import Data.Array.NonEmpty as NonEmptyArray
+import Data.Either (either, hush)
 import Data.Maybe (Maybe, maybe)
+import Data.String.Regex as Regex
+import Data.String.Regex.Flags as RegexFlags
 import Effect (Effect)
 import Effect.Aff (Aff, runAff_)
 import Effect.Class (liftEffect)
@@ -13,8 +17,23 @@ import Node.Encoding as Encoding
 import Node.FS.Aff as Fs
 import Node.Globals (__dirname)
 import Node.Path as Path
-import Prelude (Unit, bind, discard, pure, unit, void)
+import Prelude (Unit, bind, discard, join, map, pure, unit, void)
 import Simple.JSON as SimpleJSON
+
+type PackageJson =
+  { name :: String
+  , description :: String
+  , version :: String
+  , author :: Maybe Foreign
+  , bugs :: { url :: String }
+  , devDependencies :: Foreign
+  , homepage :: String
+  , keywords :: Array String
+  , license :: String
+  , main :: String
+  , repository :: { type :: String, url :: String }
+  , scripts :: Foreign
+  }
 
 exec :: String -> Array String -> Aff Unit
 exec file args =
@@ -32,23 +51,17 @@ addLicenseAndUpdateReadme = do
   _ <- Fs.appendTextFile Encoding.UTF8 "README.md" readme
   pure unit
 
-type PackageJson =
-  { name :: String
-  , description :: String
-  , version :: String
-  , author :: String
-  , bugs :: { url :: String }
-  , devDependencies :: Foreign
-  , homepage :: String
-  , keywords :: Array String
-  , license :: String
-  , main :: String
-  , repository :: { type :: String, url :: String }
-  , scripts :: Foreign
-  }
+toAuthorRecord :: String -> Maybe { email :: String, name :: String, url :: String }
+toAuthorRecord s = do
+  regex <- hush (Regex.regex "^(.+)\\s+<(.+?)>\\s+\\((.+?)\\)$" RegexFlags.noFlags)
+  matches <- map NonEmptyArray.toArray (Regex.match regex s)
+  name <- join (Array.index matches 1)
+  email <- join (Array.index matches 2)
+  url <- join (Array.index matches 3)
+  pure { email, name, url }
 
-initPackageJson :: { name :: String, description :: String } -> Aff Unit
-initPackageJson { name, description } = do
+initPackageJson :: Aff Unit
+initPackageJson = do
   log "initialize package.json..."
   exec "npm" ["init", "--yes"]
   exec "npm" ["install", "--save-dev", "npm-run-all", "psc-package-bin-simple", "purescript"]
@@ -64,13 +77,12 @@ initPackageJson { name, description } = do
       SimpleJSON.writeJSON
         (packageJsonRecord
           {
-            -- TODO: fix author format
-            -- author =
-            --   { email: "m@bouzuya.net"
-            --   , name: "bouzuya"
-            --   , url: "https://bouzuya.net/"
-            --   }
-            scripts =
+            author = do
+              authorForeign <- packageJsonRecord.author
+              authorString <- SimpleJSON.read_ authorForeign :: Maybe String
+              authorRecord <- toAuthorRecord authorString
+              pure (SimpleJSON.write authorRecord)
+          , scripts =
               SimpleJSON.write
               { build: "psc-package sources | xargs purs compile 'src/**/*.purs' 'test/**/*.purs'"
               , bundle: "purs bundle 'output/**/*.js' --main Main --module Main --output index.js"
@@ -113,7 +125,7 @@ main :: Effect Unit
 main = do
   runAff_ (either (throwException) pure) do
     addLicenseAndUpdateReadme
-    initPackageJson { name: "NAME", description: "DESCRIPTION" }
+    initPackageJson
     addDummyCodes
     initPscPackageJson
     addReactBasic

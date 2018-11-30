@@ -106,6 +106,7 @@ initPscPackageJson = do
 
 addDummyCodes :: Aff Unit
 addDummyCodes = do
+  log "add dummy codes..."
   dir <- pure (Path.concat [__dirname, "templates"])
   Fs.mkdir "src"
   src <- Fs.readTextFile Encoding.UTF8 (Path.concat [dir, "src", "Main.purs"])

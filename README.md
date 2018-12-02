@@ -9,6 +9,7 @@ $ # mkdir project1
 $ # cd project1/
 $ # echo '# foo' > README.md
 $ # git init
+$ # git add -A
 $ # git commit -m 'initial commit'
 $ # hub create
 $ # git push origin master

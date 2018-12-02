@@ -1,6 +1,8 @@
+/.cache/
 /.env*
 /.psc*
 /*.tgz
-/index.js
+/bundle.js
+/dist/
 /node_modules/
 /output/

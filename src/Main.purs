@@ -66,7 +66,7 @@ initPackageJson :: Aff Unit
 initPackageJson = do
   log "initialize package.json..."
   exec "npm" ["init", "--yes"]
-  exec "npm" ["install", "--save-dev", "npm-run-all", "psc-package", "purescript"]
+  exec "npm" ["install", "--save-dev", "npm-run-all", "parcel-bundler", "psc-package", "purescript"]
   packageJsonText <- Fs.readTextFile Encoding.UTF8 "package.json"
   packageJsonRecord <-
     liftEffect
@@ -87,12 +87,15 @@ initPackageJson = do
           , scripts =
               SimpleJSON.write
               { build: "psc-package sources | xargs purs compile 'src/**/*.purs' 'test/**/*.purs'"
-              , bundle: "purs bundle 'output/**/*.js' --main Main --module Main --output index.js"
-              , "install:psc-package": "psc-package install"
-              , prepare: "npm-run-all -s 'install:psc-package' build bundle"
+              , bundle: "npm-run-all -s 'bundle:purs' 'bundle:parcel'"
+              , "bundle:parcel": "parcel build ./index.html"
+              , "bundle:purs": "purs bundle 'output/**/*.js' --main Main --module Main --output bundle.js"
+              , "install:purs": "psc-package install"
+              , prepare: "npm-run-all -s 'install:purs' build"
               , "psc-package": "psc-package"
               , purs: "purs"
               , repl: "psc-package repl -- 'test/**/*.purs'"
+              , serve: "parcel ./index.html"
               , start: "node --eval \"require('./output/Main').main();\""
               , test: "node --eval \"require('./output/Test.Main').main();\""
               }
@@ -131,6 +134,13 @@ addGitIgnore = do
   dir <- pure (Path.concat [__dirname, "templates"])
   copyTextFile (Path.concat [dir, ".gitignore"]) ".gitignore"
 
+addIndexHtml :: Aff Unit
+addIndexHtml = do
+  log "add index.html and index.js"
+  dir <- pure (Path.concat [__dirname, "templates"])
+  copyTextFile (Path.concat [dir, "index.html"]) "index.html"
+  copyTextFile (Path.concat [dir, "index.js"]) "index.js"
+
 main :: Effect Unit
 main = do
   runAff_ (either (throwException) pure) do
@@ -140,3 +150,4 @@ main = do
     initPscPackageJson
     addReactBasic
     addGitIgnore
+    addIndexHtml

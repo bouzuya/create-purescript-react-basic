@@ -1,7 +1,7 @@
 {
   "name": "@bouzuya/create-purescript-react-basic",
   "description": "An initializer for purescript-react-basic project.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": {
     "name": "bouzuya",
     "email": "m@bouzuya.net",

@@ -66,7 +66,7 @@ initPackageJson :: Aff Unit
 initPackageJson = do
   log "initialize package.json..."
   exec "npm" ["init", "--yes"]
-  exec "npm" ["install", "--save-dev", "npm-run-all", "psc-package-bin-simple", "purescript"]
+  exec "npm" ["install", "--save-dev", "npm-run-all", "psc-package", "purescript"]
   packageJsonText <- Fs.readTextFile Encoding.UTF8 "package.json"
   packageJsonRecord <-
     liftEffect

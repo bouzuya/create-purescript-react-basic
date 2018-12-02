@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",
-    "psc-package-bin-simple": "^2.0.1",
+    "psc-package": "^3.0.0",
     "purescript": "^0.12.1"
   },
   "files": [

@@ -132,7 +132,7 @@ addGitIgnore :: Aff Unit
 addGitIgnore = do
   log "add .gitignore..."
   dir <- pure (Path.concat [__dirname, "templates"])
-  copyTextFile (Path.concat [dir, ".gitignore"]) ".gitignore"
+  copyTextFile (Path.concat [dir, "_gitignore"]) ".gitignore"
 
 addIndexHtml :: Aff Unit
 addIndexHtml = do

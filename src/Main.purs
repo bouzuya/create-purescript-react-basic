@@ -35,6 +35,11 @@ type PackageJson =
   , scripts :: Foreign
   }
 
+appendTextFile :: String -> String -> Aff Unit
+appendTextFile src dst = do
+  d <- Fs.readTextFile Encoding.UTF8 src
+  Fs.appendTextFile Encoding.UTF8 dst d
+
 copyTextFile :: String -> String -> Aff Unit
 copyTextFile src dst = do
   d <- Fs.readTextFile Encoding.UTF8 src
@@ -51,7 +56,7 @@ addLicenseAndUpdateReadme = do
   log "add license and update readme..."
   dir <- pure (Path.concat [__dirname, "templates"])
   copyTextFile (Path.concat [dir, "LICENSE"]) "LICENSE"
-  copyTextFile (Path.concat [dir, "README.md"]) "README.md"
+  appendTextFile (Path.concat [dir, "README.md"]) "README.md"
 
 toAuthorRecord :: String -> Maybe { email :: String, name :: String, url :: String }
 toAuthorRecord s = do

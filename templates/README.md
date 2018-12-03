@@ -1,3 +1,11 @@
+## How to build
+
+```
+$ npm install
+$ npm run serve # for development
+$ npm run build # for production
+```
+
 ## License
 
 [MIT](LICENSE)

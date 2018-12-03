@@ -117,6 +117,13 @@ addDummyCodes = do
   copyTextFile
     (Path.concat [dir, "src", "Main.purs"])
     (Path.concat ["src", "Main.purs"])
+  copyTextFile
+    (Path.concat [dir, "src", "Component.purs"])
+    (Path.concat ["src", "Component.purs"])
+  Fs.mkdir "src/Component"
+  copyTextFile
+    (Path.concat [dir, "src", "Component", "App.purs"])
+    (Path.concat ["src", "Component", "App.purs"])
   Fs.mkdir "test"
   copyTextFile
     (Path.concat [dir, "test", "Main.purs"])

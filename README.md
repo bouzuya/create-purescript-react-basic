@@ -13,7 +13,10 @@ $ # git add -A
 $ # git commit -m 'initial commit'
 $ # hub create
 $ # git push origin master
+$
 $ npm init @bouzuya/purescript-react-basic
+$ # or
+$ npx @bouzuya/create-purescript-react-basic
 ```
 
 ## License

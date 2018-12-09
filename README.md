@@ -19,6 +19,12 @@ $ # or
 $ npx @bouzuya/create-purescript-react-basic
 ```
 
+## Example projects
+
+- [bouzuya/purescript-react-basic-contacts][]
+
+[bouzuya/purescript-react-basic-contacts]: https://github.com/bouzuya/purescript-react-basic-contacts
+
 ## License
 
 [MIT](LICENSE)

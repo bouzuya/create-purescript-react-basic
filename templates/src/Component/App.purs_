@@ -2,7 +2,7 @@ module Component.App
   ( app
   ) where
 
-import React.Basic (Component, JSX, Self, StateUpdate(..), createComponent, make, send)
+import React.Basic (Component, JSX, Self, StateUpdate(..), createComponent, make)
 import React.Basic.DOM as H
 
 type Props =

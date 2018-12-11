@@ -22,8 +22,10 @@ $ npx @bouzuya/create-purescript-react-basic
 ## Example projects
 
 - [bouzuya/purescript-react-basic-contacts][]
+- [bouzuya/purescript-react-basic-bbn-viewer][]
 
 [bouzuya/purescript-react-basic-contacts]: https://github.com/bouzuya/purescript-react-basic-contacts
+[bouzuya/purescript-react-basic-bbn-viewer]: https://github.com/bouzuya/purescript-react-basic-bbn-viewer
 
 ## License
 

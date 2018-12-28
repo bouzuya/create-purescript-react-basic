@@ -146,6 +146,12 @@ addGitIgnore = do
   dir <- pure (Path.concat [__dirname, "templates"])
   copyTextFile (Path.concat [dir, "_gitignore"]) ".gitignore"
 
+addTravisYml :: Aff Unit
+addTravisYml = do
+  log "add .travis.yml..."
+  dir <- pure (Path.concat [__dirname, "templates"])
+  copyTextFile (Path.concat [dir, "_travis.yml"]) ".travis.yml"
+
 addIndexHtml :: Aff Unit
 addIndexHtml = do
   log "add index.html and index.js"
@@ -162,4 +168,5 @@ main = do
     initPscPackageJson
     addReactBasic
     addGitIgnore
+    addTravisYml
     addIndexHtml

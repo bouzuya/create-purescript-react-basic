@@ -95,6 +95,7 @@ initPackageJson = do
               , bundle: "npm-run-all -s 'bundle:purs' 'bundle:parcel'"
               , "bundle:parcel": "parcel build ./index.html"
               , "bundle:purs": "purs bundle 'output/**/*.js' --main Main --module Main --output bundle.js"
+              , "docs": "psc-package sources | xargs purs docs --format html 'src/**/*.purs'"
               , "install:purs": "psc-package install"
               , prepare: "npm-run-all -s 'install:purs' build"
               , "psc-package": "psc-package"

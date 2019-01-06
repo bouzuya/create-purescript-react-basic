@@ -71,7 +71,7 @@ initPackageJson :: Aff Unit
 initPackageJson = do
   log "initialize package.json..."
   exec "npm" ["init", "--yes"]
-  exec "npm" ["install", "--save-dev", "npm-run-all", "parcel-bundler", "psc-package", "purescript"]
+  exec "npm" ["install", "--save-dev", "npm-run-all", "parcel-bundler", "purescript", "purescript-spago"]
   packageJsonText <- Fs.readTextFile Encoding.UTF8 "package.json"
   packageJsonRecord <-
     liftEffect
@@ -91,29 +91,33 @@ initPackageJson = do
               pure (SimpleJSON.write authorRecord)
           , scripts =
               SimpleJSON.write
-              { build: "psc-package sources | xargs purs compile 'src/**/*.purs' 'test/**/*.purs'"
+              { build: "spago build"
               , bundle: "npm-run-all -s 'bundle:purs' 'bundle:parcel'"
               , "bundle:parcel": "parcel build ./index.html"
               , "bundle:purs": "purs bundle 'output/**/*.js' --main Main --module Main --output bundle.js"
-              , "docs": "psc-package sources | xargs purs docs --format html 'src/**/*.purs'"
-              , "install:purs": "psc-package install"
+              , "docs": "spago sources | xargs purs docs --format html 'src/**/*.purs'"
+              , "install:purs": "spago install"
               , prepare: "npm-run-all -s 'install:purs' build"
-              , "psc-package": "psc-package"
               , purs: "purs"
-              , repl: "psc-package repl -- 'test/**/*.purs'"
+              -- , repl: "psc-package repl -- 'test/**/*.purs'" -- TODO: spago repl
               , serve: "parcel ./index.html"
+              , spago: "spago"
               , start: "node --eval \"require('./output/Main').main();\""
               , test: "node --eval \"require('./output/Test.Main').main();\""
               }
           })
   Fs.writeTextFile Encoding.UTF8 "package.json" jsonText
 
-initPscPackageJson :: Aff Unit
-initPscPackageJson = do
-  log "initialize psc-package.json..."
-  exec "npm" ["run", "psc-package", "--", "init"]
-  exec "npm" ["run", "psc-package", "--", "install", "psci-support"]
-  exec "npm" ["run", "psc-package", "--", "install", "test-unit"]
+initSpagoDhall :: Aff Unit
+initSpagoDhall = do
+  log "initialize spago.dhall..."
+  dir <- pure (Path.concat [__dirname, "templates"])
+  copyTextFile
+    (Path.concat [dir, "spago.dhall"])
+    (Path.concat ["spago.dhall"])
+  -- exec "npm" ["run", "spago", "--", "init"]
+  -- exec "npm" ["run", "spago", "--", "install", "psci-support"]
+  -- exec "npm" ["run", "spago", "--", "install", "test-unit"]
 
 addDummyCodes :: Aff Unit
 addDummyCodes = do
@@ -135,11 +139,22 @@ addDummyCodes = do
     (Path.concat [dir, "test", "Main.purs_"])
     (Path.concat ["test", "Main.purs"])
 
+addPackagesDhall :: Aff Unit
+addPackagesDhall = do
+  log "add packages.dhall and bouzuya.dhall..."
+  dir <- pure (Path.concat [__dirname, "templates"])
+  copyTextFile
+    (Path.concat [dir, "bouzuya.dhall"])
+    (Path.concat ["bouzuya.dhall"])
+  copyTextFile
+    (Path.concat [dir, "packages.dhall"])
+    (Path.concat ["packages.dhall"])
+
 addReactBasic :: Aff Unit
 addReactBasic = do
   log "add react-basic deps..."
   exec "npm" ["install", "react", "react-dom"]
-  exec "npm" ["run", "psc-package", "--", "install", "react-basic"]
+  -- exec "npm" ["run", "spago", "--", "install", "react-basic"]
 
 addGitIgnore :: Aff Unit
 addGitIgnore = do
@@ -166,7 +181,8 @@ main = do
     addLicenseAndUpdateReadme
     initPackageJson
     addDummyCodes
-    initPscPackageJson
+    initSpagoDhall
+    addPackagesDhall
     addReactBasic
     addGitIgnore
     addTravisYml

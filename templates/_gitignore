@@ -1,6 +1,7 @@
 /.cache/
 /.env*
 /.psc*
+/.spago/
 /*.tgz
 /bundle.js
 /dist/

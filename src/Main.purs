@@ -141,11 +141,8 @@ addDummyCodes = do
 
 addPackagesDhall :: Aff Unit
 addPackagesDhall = do
-  log "add packages.dhall and bouzuya.dhall..."
+  log "add packages.dhall..."
   dir <- pure (Path.concat [__dirname, "templates"])
-  copyTextFile
-    (Path.concat [dir, "bouzuya.dhall"])
-    (Path.concat ["bouzuya.dhall"])
   copyTextFile
     (Path.concat [dir, "packages.dhall"])
     (Path.concat ["packages.dhall"])

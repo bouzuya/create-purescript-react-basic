@@ -99,7 +99,7 @@ initPackageJson = do
               , "install:purs": "spago install"
               , prepare: "npm-run-all -s 'install:purs' build"
               , purs: "purs"
-              -- , repl: "psc-package repl -- 'test/**/*.purs'" -- TODO: spago repl
+              , repl: "spago repl"
               , serve: "parcel ./index.html"
               , spago: "spago"
               , start: "node --eval \"require('./output/Main').main();\""

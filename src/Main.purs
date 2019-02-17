@@ -112,18 +112,15 @@ addDummyCodes :: Aff Unit
 addDummyCodes = do
   log "add dummy codes..."
   dir <- pure (Path.concat [__dirname, "templates"])
-  FS.makeDirectory "src"
   FS.copyTextFile
     (Path.concat [dir, "src", "Main.purs_"])
     (Path.concat ["src", "Main.purs"])
   FS.copyTextFile
     (Path.concat [dir, "src", "Component.purs_"])
     (Path.concat ["src", "Component.purs"])
-  FS.makeDirectory "src/Component"
   FS.copyTextFile
     (Path.concat [dir, "src", "Component", "App.purs_"])
     (Path.concat ["src", "Component", "App.purs"])
-  FS.makeDirectory "test"
   FS.copyTextFile
     (Path.concat [dir, "test", "Main.purs_"])
     (Path.concat ["test", "Main.purs"])

@@ -45,6 +45,9 @@ copyTextFile src dst = do
   d <- Fs.readTextFile Encoding.UTF8 src
   Fs.writeTextFile Encoding.UTF8 dst d
 
+writeTextFile :: String -> String -> Aff Unit
+writeTextFile = Fs.writeTextFile Encoding.UTF8
+
 exec :: String -> Array String -> Aff Unit
 exec file args =
   void
@@ -106,7 +109,7 @@ initPackageJson = do
               , test: "node --eval \"require('./output/Test.Main').main();\""
               }
           })
-  Fs.writeTextFile Encoding.UTF8 "package.json" jsonText
+  writeTextFile "package.json" jsonText
 
 initSpagoDhall :: Aff Unit
 initSpagoDhall = do

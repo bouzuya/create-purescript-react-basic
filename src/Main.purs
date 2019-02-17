@@ -116,8 +116,7 @@ initSpagoDhall = do
     (Path.concat [dir, "spago.dhall"])
     (Path.concat ["spago.dhall"])
   -- exec "npm" ["run", "spago", "--", "init"]
-  -- exec "npm" ["run", "spago", "--", "install", "psci-support"]
-  -- exec "npm" ["run", "spago", "--", "install", "test-unit"]
+  exec "npm" ["run", "spago" , "--", "install", "psci-support", "test-unit"]
 
 addDummyCodes :: Aff Unit
 addDummyCodes = do
@@ -151,7 +150,7 @@ addReactBasic :: Aff Unit
 addReactBasic = do
   log "add react-basic deps..."
   exec "npm" ["install", "react", "react-dom"]
-  -- exec "npm" ["run", "spago", "--", "install", "react-basic"]
+  exec "npm" ["run", "spago", "--", "install", "react-basic"]
 
 addGitIgnore :: Aff Unit
 addGitIgnore = do

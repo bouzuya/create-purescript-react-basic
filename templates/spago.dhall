@@ -6,9 +6,6 @@ You can edit this file as you like.
     "my-project"
 , dependencies =
     [ "prelude"
-    , "psci-support"
-    , "react-basic"
-    , "test-unit"
     ]
 , packages =
     ./packages.dhall
